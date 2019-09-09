@@ -3,7 +3,9 @@ package com.udacity.sandwichclub;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
@@ -14,6 +16,11 @@ public class DetailActivity extends AppCompatActivity {
 
     public static final String EXTRA_POSITION = "extra_position";
     private static final int DEFAULT_POSITION = -1;
+    private TextView AlsoKnownTv;
+    private TextView OriginTv;
+    private TextView DescriptionTv;
+    private TextView IngredientTv;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,6 +28,13 @@ public class DetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_detail);
 
         ImageView ingredientsIv = findViewById(R.id.image_iv);
+        AlsoKnownTv = findViewById(R.id.also_known_tv);
+        IngredientTv = findViewById(R.id.ingredients_tv);
+        OriginTv = findViewById(R.id.origin_tv);
+        DescriptionTv = findViewById(R.id.description_tv);
+
+
+
 
         Intent intent = getIntent();
         if (intent == null) {
@@ -43,7 +57,7 @@ public class DetailActivity extends AppCompatActivity {
             return;
         }
 
-        populateUI();
+        populateUI(sandwich);
         Picasso.with(this)
                 .load(sandwich.getImage())
                 .into(ingredientsIv);
@@ -56,7 +70,51 @@ public class DetailActivity extends AppCompatActivity {
         Toast.makeText(this, R.string.detail_error_message, Toast.LENGTH_SHORT).show();
     }
 
-    private void populateUI() {
+    private void populateUI(Sandwich sandwich) {
+
+
+
+        if (sandwich.getAlsoKnownAs() != null && sandwich.getAlsoKnownAs().size() > 0) {
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append(sandwich.getAlsoKnownAs().get(0));
+
+            for (int i = 1; i < sandwich.getAlsoKnownAs().size(); i++) {
+                stringBuilder.append(", ");
+                stringBuilder.append(sandwich.getAlsoKnownAs().get(i));
+            }
+            AlsoKnownTv.setText(stringBuilder.toString());
+        } else {
+            AlsoKnownTv.setVisibility(View.GONE);
+
+        }
+
+
+        if (sandwich.getPlaceOfOrigin().isEmpty()) {
+            OriginTv.setVisibility(View.GONE);
+
+        } else {
+            OriginTv.setText(sandwich.getPlaceOfOrigin());
+        }
+
+
+        DescriptionTv.setText(sandwich.getDescription());
+
+
+        if (sandwich.getIngredients() != null && sandwich.getIngredients().size() > 0) {
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("\u2022");
+            stringBuilder.append(sandwich.getIngredients().get(0));
+
+            for (int i = 1; i < sandwich.getIngredients().size(); i++) {
+                stringBuilder.append("\n");
+                stringBuilder.append("\u2022");
+                stringBuilder.append(sandwich.getIngredients().get(i));
+            }
+            IngredientTv.setText(stringBuilder.toString());
+        }
+
+
+
 
     }
 }
